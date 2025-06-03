@@ -1,0 +1,38 @@
+server:
+  port: 8080
+
+spring:
+  # todo 데이터베이스 변경
+  datasource:
+    url : jdbc:h2:mem:test
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: create # todo 추후에 변경
+    show-sql: true # 콘솔창에 sql 출력
+    properties:
+      hibernate:
+        format_sql: true # sql 이쁘게 출력
+        default_batch_fetch_size: 500 # 일대다 컬렉션 조회 시 성능 최적화
+    open-in-view: false # 영속성 컨텍스트의 생존 범위를 트랜잭션 범위로 한정
+
+  servlet:
+    multipart:
+      max-file-size: 10MB  # 파일 업로드 요청 시 하나의 파일 크기를 10MB제한
+      max-request-size: 100MB # 파일 업로드 요청 시 모든 파일 크기 합을 100MB 제한
+
+logging:
+  level:
+    org.hibernate.type: trace  # 콘솔창에 조건이 바인딩되는 값 및 조회 결과 출력
+    com.framework: debug # todo 패키지 수정
+
+token:
+  secret: test # 임의의 문자열 todo ENC(..)로 변경 필요
+  access-token-expiration-time: 900000  # 15분 1000(ms) x 60(s) x 15(m)
+  refresh-token-expiration-time: 1209600000 # 2주 1000(ms) x 60 (s) x 60(m) x 24(h) x 14(d)
+
+# todo XSS 설정 추가 필요
+# todo jasypt 설정 추가 필요
