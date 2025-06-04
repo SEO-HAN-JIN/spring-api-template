@@ -20,4 +20,9 @@ public class ResponseDto<T> {
     public static <T> ResponseDto<T> fail(String message) {
         return new ResponseDto<>(-1, message, null);
     }
+
+    // 실패 응답 (데이터 포함)
+    public static <T> ResponseDto<T> fail(String message, T data) {
+        return new ResponseDto<>(-1, message, data);
+    }
 }
