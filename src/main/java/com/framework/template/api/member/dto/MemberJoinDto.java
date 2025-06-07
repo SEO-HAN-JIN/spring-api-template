@@ -1,5 +1,6 @@
 package com.framework.template.api.member.dto;
 
+import com.framework.template.domain.member.constant.Role;
 import com.framework.template.domain.member.entity.Member;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
@@ -14,7 +15,7 @@ public class MemberJoinDto {
     public static class Request {
 
         @NotEmpty
-        @Pattern(regexp = "^[a-zA-Z]{2,20}$", message = "영문/숫자 2~20자 이내로 작성해주세요")
+        @Pattern(regexp = "^[a-zA-Z0-9]{2,20}$", message = "영문/숫자 2~20자 이내로 작성해주세요")
         private String loginId;
 
         @NotEmpty
@@ -22,11 +23,11 @@ public class MemberJoinDto {
         private String password;
 
         @NotEmpty
-        @Pattern(regexp = "^[a-zA-Z0-9]{2,10}@[a-zA-Z0-9]{2,6}\\.[a-zA-Z]{2,3}$", message = "이메일 형식으로 작성해주세요")
-        private String email;
+        private String name;
 
         @NotEmpty
-        private String name;
+        @Pattern(regexp = "^[a-zA-Z0-9]{2,10}@[a-zA-Z0-9]{2,6}\\.[a-zA-Z]{2,3}$", message = "이메일 형식으로 작성해주세요")
+        private String email;
 
         public Member toEntity(BCryptPasswordEncoder passwordEncoder) {
             return Member.builder()
@@ -34,6 +35,7 @@ public class MemberJoinDto {
                     .password(passwordEncoder.encode(password))
                     .name(name)
                     .email(email)
+                    .role(Role.USER)
                     .build();
         }
     }

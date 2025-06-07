@@ -26,8 +26,7 @@ spring:
 
 logging:
   level:
-    org.hibernate.type: trace  # 콘솔창에 조건이 바인딩되는 값 및 조회 결과 출력
-    com.framework: debug # todo 패키지 수정
+    org.hibernate.orm.jdbc.bind: trace
 
 token:
   secret: test # 임의의 문자열 todo ENC(..)로 변경 필요

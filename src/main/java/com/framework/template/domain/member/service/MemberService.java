@@ -21,14 +21,10 @@ import java.util.Optional;
 public class MemberService {
 
     private final MemberRepository memberRepository;
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final BCryptPasswordEncoder passwordEncoder;
 
     public MemberJoinDto.Response join(MemberJoinDto.Request memberJoinRequestDto) {
-        Optional<Member> memberOp = memberRepository.findByLoginId(memberJoinRequestDto.getLoginId());
-        if (memberOp.isPresent()) {
-            throw new BusinessException(ErrorCode.MEMBER_EXIST);
-        }
+        memberRepository.findByLoginId(memberJoinRequestDto.getLoginId()).ifPresent(m -> { throw new BusinessException(ErrorCode.MEMBER_EXIST); });
 
         Member member = memberRepository.save(memberJoinRequestDto.toEntity(passwordEncoder));
         return new MemberJoinDto.Response(member);
