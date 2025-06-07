@@ -1,8 +1,12 @@
 package com.framework.template.global.security.jwt.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.framework.template.domain.member.service.MemberService;
 import com.framework.template.global.error.ErrorCode;
 import com.framework.template.global.security.context.CustomUser;
+import com.framework.template.global.security.jwt.dto.JwtTokenDto;
+import com.framework.template.global.security.jwt.service.JwtProcess;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.core.AuthenticationException;
 import com.framework.template.global.security.dto.UserResDto;
@@ -23,11 +27,15 @@ import java.io.IOException;
 @Slf4j
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
-    private AuthenticationManager authenticationManager;
+    private final AuthenticationManager authenticationManager;
+    private final JwtProcess jwtProcess;
+    private final MemberService memberService;
 
-    public JwtAuthenticationFilter(AuthenticationManager authenticationManager) {
+    public JwtAuthenticationFilter(AuthenticationManager authenticationManager, JwtProcess jwtProcess, MemberService memberService) {
         setFilterProcessesUrl("/api/login");
         this.authenticationManager = authenticationManager;
+        this.jwtProcess = jwtProcess;
+        this.memberService = memberService;
     }
 
     @Override
@@ -55,6 +63,11 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
         log.debug("디버그 : successfulAuthentication 호출");
         CustomUser loginUser = (CustomUser) authResult.getPrincipal();
+        JwtTokenDto jwtTokenDto = jwtProcess.createJwtTokenDto(loginUser);
 
+        memberService.updateRefreshToken(loginUser.getAuthenticationDto().getLoginId(), jwtTokenDto);
+
+        response.setHeader("Authorization", "Bearer " + jwtTokenDto.getAccessToken());
+        response.setHeader("Refresh-Token", jwtTokenDto.getRefreshToken());
     }
 }

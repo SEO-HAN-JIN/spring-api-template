@@ -23,8 +23,6 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-
-
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::deny));
@@ -37,6 +35,7 @@ public class SecurityConfig {
 //        http.addFilterBefore(new JwtAuthenticationFilter(authenticationManager(http), jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
 
         http.authorizeHttpRequests(authorize -> authorize
+                .requestMatchers("/api/member/join").permitAll()
                 .requestMatchers("/api/**").hasRole(Role.USER.name())
                 .requestMatchers("/api/admin/**").hasRole(Role.ADMIN.name())
                 .anyRequest().authenticated()

@@ -14,7 +14,7 @@ public enum ErrorCode {
 
     // 회원
     MEMBER_NOT_EXISTS(HttpStatus.BAD_REQUEST, "M-001", "해당 회원은 존재하지 않습니다."),
-    ;
+    MEMBER_EXIST(HttpStatus.BAD_REQUEST, "M-002", "동일한 아이디가 존재합니다.");
 
     ErrorCode(HttpStatus httpStatus, String errorCode, String message) {
         this.httpStatus = httpStatus;
