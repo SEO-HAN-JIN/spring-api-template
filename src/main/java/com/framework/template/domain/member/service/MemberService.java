@@ -7,13 +7,10 @@ import com.framework.template.global.error.ErrorCode;
 import com.framework.template.global.error.exception.BusinessException;
 import com.framework.template.global.error.exception.EntityNotFoundException;
 import com.framework.template.global.security.jwt.dto.JwtTokenDto;
-import jakarta.persistence.EntityExistsException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Service
 @Transactional
@@ -28,9 +25,5 @@ public class MemberService {
 
         Member member = memberRepository.save(memberJoinRequestDto.toEntity(passwordEncoder));
         return new MemberJoinDto.Response(member);
-    }
-
-    public void updateRefreshToken(String loginId, JwtTokenDto jwtTokenDto) {
-
     }
 }

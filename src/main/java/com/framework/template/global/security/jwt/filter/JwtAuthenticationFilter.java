@@ -1,15 +1,12 @@
 package com.framework.template.global.security.jwt.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.framework.template.domain.member.service.MemberService;
-import com.framework.template.global.error.ErrorCode;
 import com.framework.template.global.security.context.CustomUser;
 import com.framework.template.global.security.jwt.dto.JwtTokenDto;
+import com.framework.template.global.security.dto.LoginDto;
 import com.framework.template.global.security.jwt.service.JwtProcess;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.core.AuthenticationException;
-import com.framework.template.global.security.dto.UserResDto;
 import com.framework.template.global.util.CustomResponseUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -29,13 +26,11 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
     private final AuthenticationManager authenticationManager;
     private final JwtProcess jwtProcess;
-    private final MemberService memberService;
 
-    public JwtAuthenticationFilter(AuthenticationManager authenticationManager, JwtProcess jwtProcess, MemberService memberService) {
+    public JwtAuthenticationFilter(AuthenticationManager authenticationManager, JwtProcess jwtProcess) {
         setFilterProcessesUrl("/api/login");
         this.authenticationManager = authenticationManager;
         this.jwtProcess = jwtProcess;
-        this.memberService = memberService;
     }
 
     @Override
@@ -44,9 +39,9 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
         try {
             ObjectMapper om = new ObjectMapper();
-            UserResDto.LoginReqDto loginReqDto = om.readValue(request.getInputStream(), UserResDto.LoginReqDto.class);
+            LoginDto.Request loginReqDto = om.readValue(request.getInputStream(), LoginDto.Request.class);
 
-            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loginReqDto.getUsername(), loginReqDto.getPassword());
+            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loginReqDto.getLoginId(), loginReqDto.getPassword());
             return authenticationManager.authenticate(authenticationToken);
         } catch (Exception e) {
             // unsuccessfulAuthentication 호출
@@ -65,9 +60,12 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         CustomUser loginUser = (CustomUser) authResult.getPrincipal();
         JwtTokenDto jwtTokenDto = jwtProcess.createJwtTokenDto(loginUser);
 
-        memberService.updateRefreshToken(loginUser.getAuthenticationDto().getLoginId(), jwtTokenDto);
+        jwtProcess.updateRefreshToken(loginUser.getAuthenticationDto().getLoginId(), jwtTokenDto);
 
         response.setHeader("Authorization", "Bearer " + jwtTokenDto.getAccessToken());
         response.setHeader("Refresh-Token", jwtTokenDto.getRefreshToken());
+
+        LoginDto.Response loginResDto = new LoginDto.Response(loginUser.getAuthenticationDto());
+        CustomResponseUtil.success(response, "로그인 성공", loginResDto);
     }
 }
