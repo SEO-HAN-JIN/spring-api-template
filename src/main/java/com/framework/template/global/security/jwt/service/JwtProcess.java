@@ -2,10 +2,7 @@ package com.framework.template.global.security.jwt.service;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.framework.template.domain.member.entity.Member;
 import com.framework.template.domain.member.repository.MemberRepository;
-import com.framework.template.global.error.ErrorCode;
-import com.framework.template.global.error.exception.EntityNotFoundException;
 import com.framework.template.global.security.context.CustomUser;
 import com.framework.template.global.security.dto.AuthenticationDto;
 import com.framework.template.global.security.jwt.constant.GrantType;
@@ -17,7 +14,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 
-import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.List;
@@ -87,11 +83,4 @@ public class JwtProcess {
                 .sign(Algorithm.HMAC512(tokenSecret.getBytes(StandardCharsets.UTF_8)));
         return refreshToken;
     }
-
-    public void updateRefreshToken(String loginId, JwtTokenDto jwtTokenDto) {
-        Member member = memberRepository.findByLoginId(loginId).orElseThrow(() -> new EntityNotFoundException(ErrorCode.MEMBER_NOT_EXISTS));
-        member.updateRefreshToken(jwtTokenDto);
-    }
-
-
 }

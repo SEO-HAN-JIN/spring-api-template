@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.framework.template.global.security.context.CustomUser;
 import com.framework.template.global.security.jwt.dto.JwtTokenDto;
 import com.framework.template.global.security.dto.LoginDto;
+import com.framework.template.global.security.jwt.service.AuthService;
 import com.framework.template.global.security.jwt.service.JwtProcess;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.authentication.LockedException;
@@ -27,11 +28,13 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
     private final AuthenticationManager authenticationManager;
     private final JwtProcess jwtProcess;
+    private final AuthService authService;
 
-    public JwtAuthenticationFilter(AuthenticationManager authenticationManager, JwtProcess jwtProcess) {
+    public JwtAuthenticationFilter(AuthenticationManager authenticationManager, JwtProcess jwtProcess, AuthService authService) {
         setFilterProcessesUrl("/api/login");
         this.authenticationManager = authenticationManager;
         this.jwtProcess = jwtProcess;
+        this.authService = authService;
     }
 
     @Override
@@ -65,7 +68,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         CustomUser loginUser = (CustomUser) authResult.getPrincipal();
         JwtTokenDto jwtTokenDto = jwtProcess.createJwtTokenDto(loginUser);
 
-        jwtProcess.updateRefreshToken(loginUser.getAuthenticationDto().getLoginId(), jwtTokenDto);
+        authService.updateRefreshToken(loginUser.getAuthenticationDto().getLoginId(), jwtTokenDto);
 
         response.setHeader("Authorization", "Bearer " + jwtTokenDto.getAccessToken());
 

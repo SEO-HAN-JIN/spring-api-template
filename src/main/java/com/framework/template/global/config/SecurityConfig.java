@@ -2,6 +2,7 @@ package com.framework.template.global.config;
 
 import com.framework.template.domain.member.constant.Role;
 import com.framework.template.global.security.jwt.filter.JwtAuthenticationFilter;
+import com.framework.template.global.security.jwt.service.AuthService;
 import com.framework.template.global.security.jwt.service.JwtProcess;
 import com.framework.template.global.util.CustomResponseUtil;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +29,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 public class SecurityConfig {
 
     private final JwtProcess jwtProcess;
+    private final AuthService authService;
 
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
@@ -48,7 +50,7 @@ public class SecurityConfig {
         http.formLogin(AbstractHttpConfigurer::disable);
         http.httpBasic(AbstractHttpConfigurer::disable);
 
-        http.addFilterBefore(new JwtAuthenticationFilter(this.authenticationManager(http.getSharedObject(AuthenticationConfiguration.class)), jwtProcess), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(new JwtAuthenticationFilter(this.authenticationManager(http.getSharedObject(AuthenticationConfiguration.class)), jwtProcess, authService), UsernamePasswordAuthenticationFilter.class);
 
         http.exceptionHandling(e -> e.authenticationEntryPoint((request, response, authException) -> {
             CustomResponseUtil.fail(response, "로그인을 진행해 주세요", HttpStatus.UNAUTHORIZED);
