@@ -2,6 +2,7 @@ package com.framework.template.api.member.controller;
 
 import com.framework.template.api.member.dto.MemberJoinDto;
 import com.framework.template.domain.member.service.MemberService;
+import com.framework.template.global.dto.ResponseDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +19,7 @@ public class MemberController {
     private final MemberService memberService;
 
     @PostMapping("/join")
-    public ResponseEntity<MemberJoinDto.Response> join(@RequestBody @Valid MemberJoinDto.Request memberJoinRequestDto) {
+    public ResponseEntity<ResponseDto<MemberJoinDto.Response>> join(@RequestBody @Valid MemberJoinDto.Request memberJoinRequestDto) {
         return ResponseEntity.ok(memberService.join(memberJoinRequestDto));
     }
 }
