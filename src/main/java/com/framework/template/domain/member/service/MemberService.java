@@ -6,8 +6,6 @@ import com.framework.template.domain.member.repository.MemberRepository;
 import com.framework.template.global.dto.ResponseDto;
 import com.framework.template.global.error.ErrorCode;
 import com.framework.template.global.error.exception.BusinessException;
-import com.framework.template.global.error.exception.EntityNotFoundException;
-import com.framework.template.global.security.jwt.dto.JwtTokenDto;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
