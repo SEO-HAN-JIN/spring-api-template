@@ -3,10 +3,12 @@ package com.framework.template.global.config;
 import com.framework.template.domain.member.constant.Role;
 import com.framework.template.global.security.jwt.filter.JwtAuthenticationFilter;
 import com.framework.template.global.security.jwt.service.JwtProcess;
+import com.framework.template.global.util.CustomResponseUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -47,6 +49,10 @@ public class SecurityConfig {
         http.httpBasic(AbstractHttpConfigurer::disable);
 
         http.addFilterBefore(new JwtAuthenticationFilter(this.authenticationManager(http.getSharedObject(AuthenticationConfiguration.class)), jwtProcess), UsernamePasswordAuthenticationFilter.class);
+
+        http.exceptionHandling(e -> e.authenticationEntryPoint((request, response, authException) -> {
+            CustomResponseUtil.fail(response, "로그인을 진행해 주세요", HttpStatus.UNAUTHORIZED);
+        }));
 
         http.authorizeHttpRequests(authorize -> authorize
                 .requestMatchers("/api/member/join").permitAll()

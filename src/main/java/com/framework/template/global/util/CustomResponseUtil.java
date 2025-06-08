@@ -18,7 +18,7 @@ public class CustomResponseUtil {
 
             response.setContentType("application/json;charset=utf-8");
             response.setStatus(200);
-            response.getWriter().println(responseBody);
+            response.getWriter().write(responseBody);
         } catch (Exception e) {
             log.error("response success 파싱 에러 : {0}", e);
         }
@@ -34,7 +34,7 @@ public class CustomResponseUtil {
 
             response.setContentType("application/json;charset=utf-8");
             response.setStatus(httpStatus.value());
-            response.getWriter().println(responseBody);
+            response.getWriter().write(responseBody);
         } catch (Exception e) {
             log.error("response error 서버 파싱 에러");
         }

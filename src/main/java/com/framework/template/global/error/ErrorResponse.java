@@ -24,11 +24,11 @@ public class ErrorResponse {
     public static ErrorResponse of(String errorCode, BindingResult bindingResult) {
         return ErrorResponse.builder()
                 .errorCode(errorCode)
-                .errorMessage(createERrorMessage(bindingResult))
+                .errorMessage(createErrorMessage(bindingResult))
                 .build();
     }
 
-    private static String createERrorMessage(BindingResult bindingResult) {
+    private static String createErrorMessage(BindingResult bindingResult) {
         StringBuilder sb = new StringBuilder();
         boolean isFirst = true;
         List<FieldError> fieldErrors = bindingResult.getFieldErrors();
